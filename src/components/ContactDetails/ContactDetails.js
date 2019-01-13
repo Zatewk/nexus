@@ -58,9 +58,9 @@ class ContactDetails extends Component {
     });
   }
 
-  /* This one should not be necessary, but componentDidMount is the solution 
-  since the component mounts just once. It is necessary to repeat the 
-  process with every update.
+  /* This one should not be necessary, but componentDidMount is not 
+  the solution since the component mounts just once. It is necessary 
+  to repeat the process with every update.
   */
   async componentDidUpdate(prevProps) {
     const { match } = this.props;
@@ -94,21 +94,31 @@ class ContactDetails extends Component {
           <Link to="/">
             <Icon>arrow_back_ios</Icon>
           </Link>
-          {data.name} {data.last}
+          {data.name} 
+          {' '}
+          {data.last}
         </Header>
         <Container>
           <ul>
             <li>
-              <strong>User</strong>: {data.user}
+              <strong>User</strong>
+:
+              {data.user}
             </li>
             <li>
-              <strong>E-mail</strong>: {data.email}
+              <strong>E-mail</strong>
+:
+              {data.email}
             </li>
             <li>
-              <strong>Home Phone</strong>: {data.phone}
+              <strong>Home Phone</strong>
+:
+              {data.phone}
             </li>
             <li>
-              <strong>Mobile Phone</strong>: {data.mobile}
+              <strong>Mobile Phone</strong>
+:
+              {data.mobile}
             </li>
           </ul>
         </Container>

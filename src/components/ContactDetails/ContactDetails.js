@@ -6,23 +6,83 @@ import styled from 'styled-components';
 import Icon from '../Icon';
 import Link from '../Link';
 
+import Contacts from '../../services/contacts';
+
 const Container = styled('section')``;
 const Header = styled('header')``;
 
 class ContactDetails extends Component {
   static defaultProps = {
     className: '',
+    match: {
+      params: {
+        id: '',
+      },
+    },
   };
 
   static propTypes = {
     className: PropTypes.string,
+    match: PropTypes.shape({
+      params: PropTypes.shape({
+        id: PropTypes.string,
+      }),
+    }),
   };
 
-  state = {
-    data: { name: '[name]' },
-  };
+  constructor(props) {
+    super(props);
 
-  componentDidMount() {}
+    this.state = {
+      data: { name: '[User]' },
+    };
+  }
+
+  async componentDidMount() {
+    const { match } = this.props;
+    const contacts = await Contacts.read(match.params.id);
+
+    this.setState({
+      data: {
+        name:
+          contacts.name.first.charAt(0).toUpperCase() +
+          contacts.name.first.slice(1),
+        last:
+          contacts.name.last.charAt(0).toUpperCase() +
+          contacts.name.last.slice(1),
+        user: contacts.login.username,
+        email: contacts.email,
+        phone: contacts.phone,
+        mobile: contacts.cell,
+      },
+    });
+  }
+
+  /* This one should not be necessary, but componentDidMount is the solution 
+  since the component mounts just once. It is necessary to repeat the 
+  process with every update.
+  */
+  async componentDidUpdate(prevProps) {
+    const { match } = this.props;
+
+    if (match.params.id !== prevProps.match.params.id) {
+      const contacts = await Contacts.read(match.params.id);
+      this.setState({
+        data: {
+          name:
+            contacts.name.first.charAt(0).toUpperCase() +
+            contacts.name.first.slice(1),
+          last:
+            contacts.name.last.charAt(0).toUpperCase() +
+            contacts.name.last.slice(1),
+          user: contacts.login.username,
+          email: contacts.email,
+          phone: contacts.phone,
+          mobile: contacts.cell,
+        },
+      });
+    }
+  }
 
   render() {
     const { className } = this.props;
@@ -34,9 +94,24 @@ class ContactDetails extends Component {
           <Link to="/">
             <Icon>arrow_back_ios</Icon>
           </Link>
-          {data.name}
+          {data.name} {data.last}
         </Header>
-        <Container>You need to implement the view here</Container>
+        <Container>
+          <ul>
+            <li>
+              <strong>User</strong>: {data.user}
+            </li>
+            <li>
+              <strong>E-mail</strong>: {data.email}
+            </li>
+            <li>
+              <strong>Home Phone</strong>: {data.phone}
+            </li>
+            <li>
+              <strong>Mobile Phone</strong>: {data.mobile}
+            </li>
+          </ul>
+        </Container>
       </article>
     );
   }

@@ -34,9 +34,22 @@ class ContactDetails extends Component {
     data: { name: '[User]' },
   };
 
-  async componentDidMount() {
+  componentDidMount() {
     const { match } = this.props;
-    const contacts = await Contacts.read(match.params.id);
+
+    this.updateData(match.params.id);
+  }
+
+  componentDidUpdate(prevProps) {
+    const { match } = this.props;
+
+    if (match.params.id !== prevProps.match.params.id) {
+      this.updateData(match.params.id);
+    }
+  }
+
+  async updateData(id) {
+    const contacts = await Contacts.read(id);
 
     this.setState({
       data: {
@@ -54,28 +67,6 @@ class ContactDetails extends Component {
     });
   }
 
-  async componentDidUpdate(prevProps) {
-    const { match } = this.props;
-
-    if (match.params.id !== prevProps.match.params.id) {
-      const contacts = await Contacts.read(match.params.id);
-      this.setState({
-        data: {
-          name:
-            contacts.name.first.charAt(0).toUpperCase() +
-            contacts.name.first.slice(1),
-          last:
-            contacts.name.last.charAt(0).toUpperCase() +
-            contacts.name.last.slice(1),
-          user: contacts.login.username,
-          email: contacts.email,
-          phone: contacts.phone,
-          mobile: contacts.cell,
-        },
-      });
-    }
-  }
-
   render() {
     const { className } = this.props;
     const { data } = this.state;
@@ -86,27 +77,33 @@ class ContactDetails extends Component {
           <Link to="/">
             <Icon>arrow_back_ios</Icon>
           </Link>
-          {data.name} 
-          {' '}
-          {data.last}
+          {data.name} {data.last}
         </Header>
         <Container>
           <table>
             <tbody>
               <tr>
-                <td><Icon>person</Icon></td>
+                <td>
+                  <Icon>person</Icon>
+                </td>
                 <td>{data.user}</td>
               </tr>
               <tr>
-                <td><Icon>email</Icon></td>
+                <td>
+                  <Icon>email</Icon>
+                </td>
                 <td>{data.email}</td>
               </tr>
               <tr>
-                <td><Icon>local_phone</Icon></td>
+                <td>
+                  <Icon>local_phone</Icon>
+                </td>
                 <td>{data.phone}</td>
               </tr>
               <tr>
-                <td><Icon>smartphone</Icon></td>
+                <td>
+                  <Icon>smartphone</Icon>
+                </td>
                 <td>{data.mobile}</td>
               </tr>
             </tbody>

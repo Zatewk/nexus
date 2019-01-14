@@ -30,21 +30,26 @@ class ContactDetails extends Component {
     }),
   };
 
-  constructor(props) {
-    super(props);
+  state = {
+    data: { name: '[User]' },
+  };
 
-    this.state = {
-      data: { name: '[User]' },
-    };
+  componentDidMount() {
+    const { match } = this.props;
+
+    this.updateData(match.params.id);
   }
 
-  /**
-  This one should be enough, but the component mounts just once
-  WHY? 
-  */
-  async componentDidMount() {
+  componentDidUpdate(prevProps) {
     const { match } = this.props;
-    const contacts = await Contacts.read(match.params.id);
+
+    if (match.params.id !== prevProps.match.params.id) {
+      this.updateData(match.params.id);
+    }
+  }
+
+  async updateData(id) {
+    const contacts = await Contacts.read(id);
 
     this.setState({
       data: {
@@ -62,33 +67,6 @@ class ContactDetails extends Component {
     });
   }
 
-  /**
-  This one should not be necessary, but componentDidMount is not 
-  the solution since the component mounts just once. It is necessary 
-  to repeat the process with every update.
-  */
-  async componentDidUpdate(prevProps) {
-    const { match } = this.props;
-
-    if (match.params.id !== prevProps.match.params.id) {
-      const contacts = await Contacts.read(match.params.id);
-      this.setState({
-        data: {
-          name:
-            contacts.name.first.charAt(0).toUpperCase() +
-            contacts.name.first.slice(1),
-          last:
-            contacts.name.last.charAt(0).toUpperCase() +
-            contacts.name.last.slice(1),
-          user: contacts.login.username,
-          email: contacts.email,
-          phone: contacts.phone,
-          mobile: contacts.cell,
-        },
-      });
-    }
-  }
-
   render() {
     const { className } = this.props;
     const { data } = this.state;
@@ -102,20 +80,34 @@ class ContactDetails extends Component {
           {data.name} {data.last}
         </Header>
         <Container>
-          <ul>
-            <li>
-              <strong>User</strong>:{data.user}
-            </li>
-            <li>
-              <strong>E-mail</strong>:{data.email}
-            </li>
-            <li>
-              <strong>Home Phone</strong>:{data.phone}
-            </li>
-            <li>
-              <strong>Mobile Phone</strong>:{data.mobile}
-            </li>
-          </ul>
+          <table>
+            <tbody>
+              <tr>
+                <td>
+                  <Icon>person</Icon>
+                </td>
+                <td>{data.user}</td>
+              </tr>
+              <tr>
+                <td>
+                  <Icon>email</Icon>
+                </td>
+                <td>{data.email}</td>
+              </tr>
+              <tr>
+                <td>
+                  <Icon>local_phone</Icon>
+                </td>
+                <td>{data.phone}</td>
+              </tr>
+              <tr>
+                <td>
+                  <Icon>smartphone</Icon>
+                </td>
+                <td>{data.mobile}</td>
+              </tr>
+            </tbody>
+          </table>
         </Container>
       </article>
     );

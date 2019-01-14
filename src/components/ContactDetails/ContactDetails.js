@@ -30,13 +30,9 @@ class ContactDetails extends Component {
     }),
   };
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      data: { name: '[User]' },
-    };
-  }
+  state = {
+    data: { name: '[User]' },
+  };
 
   /**
   This one should be enough, but the component mounts just once
@@ -66,7 +62,7 @@ class ContactDetails extends Component {
   This one should not be necessary, but componentDidMount is not 
   the solution since the component mounts just once. It is necessary 
   to repeat the process with every update.
-  */
+
   async componentDidUpdate(prevProps) {
     const { match } = this.props;
 
@@ -88,10 +84,12 @@ class ContactDetails extends Component {
       });
     }
   }
+*/
 
   render() {
     const { className } = this.props;
     const { data } = this.state;
+    const { match } = this.props;
 
     return (
       <article className={className}>
@@ -100,6 +98,7 @@ class ContactDetails extends Component {
             <Icon>arrow_back_ios</Icon>
           </Link>
           {data.name} {data.last}
+          {match.params.testval}
         </Header>
         <Container>
           <ul>
